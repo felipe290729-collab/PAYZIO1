@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway | Hendra Wijaya Kusuma</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            opacity: 0.1;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+        }
+
+        .circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 10%;
+            left: 15%;
+            animation-delay: 10s;
+            background: linear-gradient(45deg, #a1ffce, #faffd1);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-40px) rotate(180deg);
+            }
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 2px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #b0b0d0;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .payment-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .payment-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .payment-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(106, 17, 203, 0.4);
+        }
+
+        .payment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            z-index: 2;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            font-size: 28px;
+            color: white;
+        }
+
+        .qris-icon {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .dana-icon {
+            background: linear-gradient(135deg, #1185cb 0%, #0abab5 100%);
+        }
+
+        .gopay-icon {
+            background: linear-gradient(135deg, #00a86b 0%, #00d4aa 100%);
+        }
+
+        .card-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .card-content {
+            margin-bottom: 20px;
+        }
+
+        .card-content p {
+            color: #b0b0d0;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .qris-image {
+            width: 100%;
+            max-width: 280px;
+            height: 280px;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .qris-image:hover {
+            border-color: #4facfe;
+            background: rgba(79, 172, 254, 0.05);
+        }
+
+        .qris-placeholder {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .qris-placeholder i {
+            font-size: 60px;
+            color: #4facfe;
+            margin-bottom: 15px;
+        }
+
+        .qris-placeholder p {
+            color: #b0b0d0;
+            font-size: 0.9rem;
+        }
+
+        .payment-number {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .payment-number:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .payment-number i {
+            font-size: 22px;
+            margin-right: 15px;
+            color: #6a11cb;
+        }
+
+        .payment-number span {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .copy-btn {
+            margin-left: auto;
+            background: rgba(106, 17, 203, 0.2);
+            border: none;
+            color: #6a11cb;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(106, 17, 203, 0.4);
+            transform: scale(1.05);
+        }
+
+        .name-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 20px;
+            text-align: center;
+            border-left: 4px solid #6a11cb;
+        }
+
+        .name-container p {
+            color: #b0b0d0;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .name-container h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #b0b0d0;
+            font-size: 0.9rem;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(90deg, #00a86b, #00d4aa);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 168, 107, 0.3);
+            font-weight: 500;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .payment-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-number span {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .payment-card {
+                padding: 20px;
+            }
+            
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Payment Gateway</h1>
+            <p>Gunakan metode pembayaran di bawah untuk melakukan transfer. Pastikan data yang dimasukkan sudah benar.</p>
+        </div>
+
+        <div class="payment-container">
+            <!-- QRIS Payment Card -->
+            <div class="payment-card">
+                <div class="card-header">
+                    <div class="card-icon qris-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h2>QRIS Payment</h2>
+                </div>
+                <div class="card-content">
+                    <p>Scan kode QRIS berikut menggunakan aplikasi mobile banking atau e-wallet yang mendukung QRIS.</p>
+                    <div class="qris-image">
+                        <div class="qris-placeholder">
+                            <i class="fas fa-qrcode"></i>
+                            <p>QRIS Code<br><span style="color: #4facfe; font-size: 0.8rem;">(qris.png akan diupload ke GitHub)</span></p>
+                        </div>
+                    </div>
+                    <div class="name-container">
+                        <p>Atas Nama</p>
+                        <h3>HENDRA WIJAYA KUSUMA</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- E-Wallet Payment Card -->
+            <div class="payment-card">
+                <div class="card-header">
+                    <div class="card-icon dana-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <h2>E-Wallet Payment</h2>
+                </div>
+                <div class="card-content">
+                    <p>Transfer melalui DANA atau GOPAY ke nomor berikut. Pastikan nama penerima sudah sesuai.</p>
+                    
+                    <div class="payment-options">
+                        <div class="payment-option">
+                            <h3 style="margin-bottom: 15px; color: #4facfe; display: flex; align-items: center;">
+                                <i class="fas fa-mobile-alt" style="margin-right: 10px;"></i> DANA
+                            </h3>
+                            <div class="payment-number">
+                                <i class="fas fa-phone"></i>
+                                <span>0812-2382-3892</span>
+                                <button class="copy-btn" data-number="081223823892">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-option" style="margin-top: 25px;">
+                            <h3 style="margin-bottom: 15px; color: #00a86b; display: flex; align-items: center;">
+                                <i class="fab fa-google" style="margin-right: 10px;"></i> GOPAY
+                            </h3>
+                            <div class="payment-number">
+                                <i class="fas fa-phone"></i>
+                                <span>0812-2382-3892</span>
+                                <button class="copy-btn" data-number="081223823892">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="name-container">
+                        <p>Atas Nama</p>
+                        <h3>HENDRA WIJAYA KUSUMA</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2023 Payment Gateway | Setelah transfer, harap konfirmasi melalui WhatsApp ke nomor yang tertera.</p>
+        </div>
+    </div>
+
+    <!-- Notification Element -->
+    <div class="notification" id="notification">
+        Nomor berhasil disalin ke clipboard!
+    </div>
+
+    <script>
+        // Copy to clipboard functionality
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const number = this.getAttribute('data-number');
+                navigator.clipboard.writeText(number).then(() => {
+                    showNotification('Nomor berhasil disalin ke clipboard!');
+                }).catch(err => {
+                    showNotification('Gagal menyalin nomor. Silakan salin manual.');
+                });
+            });
+        });
+
+        // Show notification function
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add animation to payment cards on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.payment-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+          </html>
